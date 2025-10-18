@@ -107,7 +107,6 @@ jobs:
           # keep index.yaml at repo root AND also under charts so both
           # /index.yaml and /charts/index.yaml are available via GitHub Pages
           cp charts/index.yaml .
-          cp index.html .
 
       - name: Publish Helm repo to charts branch
         uses: peaceiris/actions-gh-pages@v3
