@@ -1,0 +1,5 @@
+apiVersion: v2
+name: k8s-ca-injector
+description: MutatingAdmissionWebhook to inject certificates into pods automatically based on simple annotations in kubernetes
+version: 0.1.0
+appVersion: v0.1.0
