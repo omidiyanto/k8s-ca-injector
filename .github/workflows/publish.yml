@@ -1,0 +1,126 @@
+name: Build and publish
+
+on:
+  push:
+    branches: [ 'master', 'main' ]
+    tags: [ 'v*' ]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up QEMU (optional, for multi-arch builds)
+        uses: docker/setup-qemu-action@v2
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract chart version
+        id: chart-version
+        run: |
+          CHART=charts/k8s-ca-injector/Chart.yaml
+          if [ -f "$CHART" ]; then
+            VERSION=$(grep -E '^version:' "$CHART" | head -n1 | awk '{print $2}')
+          fi
+          # Fallback to short sha if no version found
+          if [ -z "$VERSION" ]; then
+            VERSION=${GITHUB_SHA::8}
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Chart version set to $VERSION"
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/k8s-ca-injector:v${{ env.VERSION }}
+            ghcr.io/${{ github.repository_owner }}/k8s-ca-injector:latest
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+        with:
+          # Use requested Helm version
+          version: 3.19.0
+
+      - name: Helm login to GHCR
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Package and push Helm chart (OCI)
+        env:
+          HELM_EXPERIMENTAL_OCI: 1
+        run: |
+          set -euo pipefail
+          CHART_DIR=charts/k8s-ca-injector
+          if [ ! -d "$CHART_DIR" ]; then
+            echo "Chart directory $CHART_DIR not found, skipping chart publish"
+            exit 0
+          fi
+          # Use computed VERSION
+          VERSION=${{ env.VERSION }}
+          echo "Packaging chart $CHART_DIR with version $VERSION"
+          helm package "$CHART_DIR" --version "$VERSION" --destination .
+          # Helm may create a tgz with a slightly different prefix; find the produced file
+          CHART_TGZ=$(ls -1 *"${VERSION}".tgz 2>/dev/null | head -n1 || true)
+          if [ -z "$CHART_TGZ" ]; then
+            echo "Expected package *${VERSION}.tgz not found"
+            ls -la || true
+            exit 1
+          fi
+          echo "Pushing $CHART_TGZ to oci://ghcr.io/${{ github.repository_owner }}"
+          helm push "$CHART_TGZ" "oci://ghcr.io/${{ github.repository_owner }}"
+
+      - name: Prepare Helm repo artifacts for GitHub Pages
+        run: |
+          set -euo pipefail
+          OWNER=${{ github.repository_owner }}
+          REPO_NAME=$(basename "${{ github.repository }}")
+          VERSION=${{ env.VERSION }}
+          echo "Preparing Helm repo artifacts for ${OWNER}/${REPO_NAME} version ${VERSION}"
+          mkdir -p charts/charts
+          PACKAGED_TGZ=$(ls -1 *"${VERSION}".tgz 2>/dev/null | head -n1 || true)
+          if [ -z "$PACKAGED_TGZ" ]; then
+            echo "Packaged tgz not found in working dir"
+            ls -la || true
+            exit 1
+          fi
+          mv "$PACKAGED_TGZ" charts/charts/
+          cd charts
+          # create index for the charts directory, pointing to GitHub Pages location
+          helm repo index charts --url "https://${OWNER}.github.io/${REPO_NAME}/charts"
+          # keep index.yaml at repo root AND also under charts so both
+          # /index.yaml and /charts/index.yaml are available via GitHub Pages
+          cp charts/index.yaml .
+          echo "Hi, welcome to k8s-ca-injector Helm chart repository by O.Midiyanto!" > index.html
+
+      - name: Publish Helm repo to charts branch
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          # Prefer an explicit PAT stored in GH_PAGES_PAT for write access to gh-pages
+          github_token: ${{ secrets.GH_PAGES_PAT || secrets.GITHUB_TOKEN }}
+          publish_dir: ./charts
+          # optional: keep history false for simpler pushes
+          publish_branch: charts
+
+      - name: Show how to add the Helm repo (info)
+        run: |
+          OWNER=${{ github.repository_owner }}
+          REPO_NAME=$(basename "${{ github.repository }}")
+          echo "To add the chart repo run:"
+          echo "  helm repo add ${REPO_NAME} https://${OWNER}.github.io/${REPO_NAME}/charts"

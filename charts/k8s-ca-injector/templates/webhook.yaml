@@ -1,0 +1,27 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: k8s-ca-injector.k8s
+webhooks:
+- name: k8s-ca-injector.cert-manager.svc
+  admissionReviewVersions:
+    - v1
+  sideEffects: NoneOnDryRun
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    resources:
+    - pods
+  failurePolicy: Ignore
+  clientConfig:
+    caBundle: ""
+    service:
+      namespace: {{ .Release.Namespace }} 
+      name: {{ include "k8s-ca-injector.fullname" . }}
+      path: /pods
+      port: {{ .Values.service.port }}
+--- 
