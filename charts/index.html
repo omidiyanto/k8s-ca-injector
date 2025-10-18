@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>k8s-ca-injector Helm Chart</title>
+    <style>
+        /* Tampilan Dasar & Tipografi */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            line-height: 1.6;
+            background-color: #f6f8fa; /* Latar belakang ala GitHub */
+            color: #24292e;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Kontainer Utama */
+        main {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border: 1px solid #d1d5da;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Judul */
+        h1 {
+            font-size: 2em;
+            border-bottom: 2px solid #eaecef;
+            padding-bottom: 0.5em;
+            margin-top: 0;
+        }
+
+        h2 {
+            font-size: 1.6em;
+            border-bottom: 1px solid #eaecef;
+            padding-bottom: 0.4em;
+            margin-top: 1.5em;
+        }
+
+        h3 {
+            font-size: 1.3em;
+            margin-top: 1.5em;
+        }
+        
+        /* Paragraf & Teks */
+        p {
+            margin-bottom: 1em;
+        }
+
+        p.author {
+            font-size: 1.1em;
+            color: #586069;
+            margin-top: -10px;
+        }
+
+        strong {
+            color: #24292e;
+            font-weight: 600;
+        }
+
+        /* Daftar (List) */
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 0.5em;
+        }
+
+        /* Blok Kode */
+        pre {
+            background-color: #2d2d2d; /* Latar belakang gelap untuk kode */
+            color: #f1f1f1;
+            padding: 1.2em;
+            border-radius: 6px;
+            overflow-x: auto; /* Agar bisa scroll horizontal jika kode panjang */
+            line-height: 1.4;
+        }
+
+        code {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            font-size: 0.95em;
+        }
+        
+        /* Garis Pemisah */
+        hr {
+            height: 4px;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #e1e4e8;
+            border: 0;
+        }
+
+    </style>
+</head>
+<body>
+    <main>
+        <h1>☸️ Kubernetes (k8s) CA Injector Helm Chart</h1>
+        <p class="author">by O. Midiyanto</p>
+        <p>Hi, welcome to the Helm chart repository for k8s-ca-injector!</p>
+
+        <h2>📋 Prerequisites</h2>
+        <p>Before you begin, ensure your environment meets the following requirements:</p>
+        <ul>
+            <li>An active <strong>Kubernetes cluster</strong>.</li>
+            <li><strong>cert-manager</strong> must be installed and running. This webhook will be deployed to the <code>cert-manager</code> namespace.</li>
+            <li><strong>trust-manager</strong> must be installed. We'll use it to create the CA bundle and sync it into a Secret.</li>
+        </ul>
+        <pre><code>
+helm repo add jetstack https://charts.jetstack.io --force-update
+
+helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version v1.19.1 \
+  --set crds.enabled=true
+
+helm upgrade trust-manager jetstack/trust-manager \
+  --install \
+  --namespace cert-manager \
+  --wait \
+  --set secretTargets.enabled=true \
+  --set secretTargets.authorizedSecretsAll=true
+</code></pre>
+
+        <hr>
+
+        <h2>🚀 Installation & Setup</h2>
+        <p>Install using helm charts:</p>
+        <pre><code>
+helm repo add k8s-ca-injector https://omidiyanto.github.io/k8s-ca-injector/
+helm repo update
+helm install k8s-ca-injector k8s-ca-injector/k8s-ca-injector --version 0.1.0 --namespace cert-manager
+</code></pre>
+    </main>
+</body>
+</html>
