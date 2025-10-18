@@ -114,7 +114,7 @@ To enable the injection, you need to add annotations to your Pod spec. `ca-injec
 
 To inject the CA bundle into a Pod, simply add the `k8s/injectssl` annotation to the `spec.template.metadata.annotations` of your **Deployment**, **StatefulSet**, or other workload resource.
 
-The value of the annotation must match the name of the `Bundle` (and the resulting Secret) that you created in `Step 1`.
+The value of the annotation must match the name of the `Bundle` (and the resulting Secret) that you created in `Step 2`.
 
 ### Example: Deployment
 

@@ -107,7 +107,6 @@ jobs:
           # keep index.yaml at repo root AND also under charts so both
           # /index.yaml and /charts/index.yaml are available via GitHub Pages
           cp charts/index.yaml .
-          echo "Hi, welcome to k8s-ca-injector Helm chart repository by O.Midiyanto!" > index.html
 
       - name: Publish Helm repo to charts branch
         uses: peaceiris/actions-gh-pages@v3
@@ -117,10 +116,3 @@ jobs:
           publish_dir: ./charts
           # optional: keep history false for simpler pushes
           publish_branch: charts
-
-      - name: Show how to add the Helm repo (info)
-        run: |
-          OWNER=${{ github.repository_owner }}
-          REPO_NAME=$(basename "${{ github.repository }}")
-          echo "To add the chart repo run:"
-          echo "  helm repo add ${REPO_NAME} https://${OWNER}.github.io/${REPO_NAME}/charts"
