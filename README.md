@@ -224,7 +224,7 @@ If you'd like to improve **k8s-ca-injector**, add features, or fix bugs, here’
    git commit -m "feat: add awesome feature"
    git push origin feature/my-new-feature
    ```
-6. **Open a Pull Request (PR)** to the `main` branch.
+6. **Open a Pull Request (PR)** to the `master` branch.
 
 Please make sure your PR includes:
 
