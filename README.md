@@ -1,5 +1,17 @@
 # CA Injector for Kubernetes 💉
 
+<div align="center">
+    <a href="https://sonarcloud.io/summary/new_code?id=omidiyanto_k8s-ca-injector">
+        <img src="https://sonarcloud.io/api/project_badges/measure?project=omidiyanto_k8s-ca-injector&metric=alert_status" alt="Quality Gate Status">
+    </a>
+    <br><br>
+    <img src="https://img.shields.io/badge/kubernetes-blue?style=for-the-badge&logo=kubernetes&logoColor=white">
+    <img src="https://img.shields.io/badge/docker-green.svg?style=for-the-badge&logo=docker&logoColor=black">
+    <img src="https://img.shields.io/badge/helm-red?style=for-the-badge&logo=helm&logoColor=white">
+</div>
+<br>
+
+
 A Kubernetes Mutating Admission Webhook that automatically injects custom CA certificate bundles into your pods.
 
 This project is designed to allow off-the-shelf deployments to run in clusters with custom Certificate Authorities (CAs) without needing to modify container images. Say goodbye to the manual process of `ADD yourca.crt ...` and `RUN update-ca-certificates` in your Dockerfiles\!
