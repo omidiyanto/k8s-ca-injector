@@ -199,3 +199,38 @@ MIIDNTC..................
 ```
 
 If the commands above produce the expected output, the injection was successful\! 🎉
+
+## 🧩 How to Contribute
+
+We ❤️ contributions from the community!
+If you'd like to improve **k8s-ca-injector**, add features, or fix bugs, here’s how you can get started:
+
+1. **Fork** this repository.
+2. **Clone** your fork locally:
+
+   ```bash
+   git clone https://github.com/<your-username>/k8s-ca-injector.git
+   cd k8s-ca-injector
+   ```
+3. **Create a feature branch**:
+
+   ```bash
+   git checkout -b feature/my-new-feature
+   ```
+4. **Make your changes**, and ensure the code passes lint/tests.
+5. **Commit and push**:
+
+   ```bash
+   git commit -m "feat: add awesome feature"
+   git push origin feature/my-new-feature
+   ```
+6. **Open a Pull Request (PR)** to the `main` branch.
+
+Please make sure your PR includes:
+
+* Clear description of what it changes or fixes
+* Tests or examples (if applicable)
+* Updated documentation (if relevant)
+
+> Contributions of all kinds are welcome — code, documentation, tests, or even ideas!
+> Let’s make `k8s-ca-injector` better together 🚀
