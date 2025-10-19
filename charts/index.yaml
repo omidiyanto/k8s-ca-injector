@@ -3,12 +3,12 @@ entries:
   k8s-ca-injector:
   - apiVersion: v2
     appVersion: v0.1.0
-    created: "2025-10-18T09:50:06.63402852Z"
+    created: "2025-10-19T14:35:50.197406401Z"
     description: MutatingAdmissionWebhook to inject certificates into pods automatically
       based on simple annotations in kubernetes
-    digest: 2ada18a108b7fc4e07a81702c97f35c9e9df9c7c420387f99fc48c748d51226c
+    digest: f922226c4576cfc1992ed03057faaa89778ab2689f85763c8c1f5d7dc4dd827d
     name: k8s-ca-injector
     urls:
     - https://omidiyanto.github.io/k8s-ca-injector/charts/k8s-ca-injector-0.1.0.tgz
     version: 0.1.0
-generated: "2025-10-18T09:50:06.632732143Z"
+generated: "2025-10-19T14:35:50.196546193Z"
