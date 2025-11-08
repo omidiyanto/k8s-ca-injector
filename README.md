@@ -11,6 +11,7 @@
 </div>
 <br>
 
+<img width="3040" height="4129" alt="image" src="https://github.com/user-attachments/assets/275d965c-1c68-41fa-a7b9-5a3656669929" />
 
 A Kubernetes Mutating Admission Webhook that automatically injects custom CA certificate bundles into your pods.
 
